@@ -7,18 +7,15 @@ import os
 import json
 import asyncio
 
-# Path to your cookies JSON file
-cookies_file = 'cookies.json'
+cookies_file = 'cookies.txt'  # The Netscape format cookies file
 
-# yt-dlp options
 ydl_opts = {
-    'cookiefile': cookies_file,  # Specify your cookies file here
+    'cookiefile': cookies_file,  # Specify your Netscape cookies file here
     'format': 'bestaudio/best',
     'noplaylist': True,
 }
 
-# Example URL (replace with your desired video)
-video_url = 'https://www.youtube.com/watch?v=M-P4QBt-FWw'
+video_url = 'https://www.youtube.com/watch?v=M-P4QBt-FWw'  # Example URL
 
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     ydl.download([video_url])
