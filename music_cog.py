@@ -75,6 +75,32 @@ class music_cog(commands.Cog):
                 print(f"Error searching YouTube: {e}")
                 return False
 
+@bot.command()
+async def join(ctx):
+    # Check if the user is in a voice channel
+    if not ctx.author.voice:
+        await ctx.send("You need to join a voice channel first!")
+        return
+
+    channel = ctx.author.voice.channel
+
+    # Connect to the voice channel
+    try:
+        # Join the voice channel and establish the connection
+        vc = await channel.connect()
+        await ctx.send(f"Joined {channel.name} successfully!")
+    except Exception as e:
+        await ctx.send(f"Error: {str(e)}")
+
+    @bot.command()
+async def leave(ctx):
+    # Disconnect from the voice channel
+    if ctx.voice_client:
+        await ctx.voice_client.disconnect()
+        await ctx.send("Disconnected from the voice channel.")
+    else:
+        await ctx.send("I'm not in a voice channel.")
+
     async def play_music(self, ctx):
         """Play music from the queue."""
         if len(self.music_queue) > 0:
