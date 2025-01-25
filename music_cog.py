@@ -7,6 +7,22 @@ import os
 import json
 import asyncio
 
+# Path to your cookies JSON file
+cookies_file = 'cookies.json'
+
+# yt-dlp options
+ydl_opts = {
+    'cookiefile': cookies_file,  # Specify your cookies file here
+    'format': 'bestaudio/best',
+    'noplaylist': True,
+}
+
+# Example URL (replace with your desired video)
+video_url = 'https://www.youtube.com/watch?v=M-P4QBt-FWw'
+
+with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    ydl.download([video_url])
+
 class music_cog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
