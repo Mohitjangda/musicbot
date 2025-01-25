@@ -20,11 +20,6 @@ video_url = 'https://www.youtube.com/watch?v=M-P4QBt-FWw'  # Example URL
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     ydl.download([video_url])
 
-intents = discord.Intents.default()
-intents.message_content = True
-bot = commands.Bot(command_prefix='!', intents=intents)
-
-
 class music_cog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -79,7 +74,7 @@ class music_cog(commands.Cog):
             except Exception as e:
                 print(f"Error searching YouTube: {e}")
                 return False
-
+                
     async def play_music(self, ctx):
         """Play music from the queue."""
         if len(self.music_queue) > 0:
@@ -238,42 +233,43 @@ class music_cog(commands.Cog):
         elif action == "list":
             playlists = [f[:-5] for f in os.listdir(self.playlist_dir) if f.endswith(".json")]
             if playlists:
-                await ctx.send(f"📜 **Playlists:**\n" + "\n".join(playlists))
+                await ctx.send("🎵 **Saved Playlists:**\n" + "\n".join(playlists))
             else:
                 await ctx.send("❌ No playlists found.")
         else:
-            await ctx.send("❌ Invalid action. Use 'save', 'load', 'delete', or 'list'.")
+            await ctx.send("❌ Invalid action. Use save, load, delete, or list.")
 
+    @commands.command(name="shuffle", help="Shuffle the queue")
+    async def shuffle(self, ctx):
+        """Shuffle the queue."""
+        if len(self.music_queue) > 1:
+            random.shuffle(self.music_queue)
+            await ctx.send("🔀 Shuffled the queue.")
+        else:
+            await ctx.send("❌ Not enough songs in the queue to shuffle.")
 
-# The following commands should be outside the class definition, at the root level
-
-@bot.command()
+    @bot.command()
 async def join(ctx):
-    """Join the user's voice channel."""
+    # Check if the user is in a voice channel
     if not ctx.author.voice:
         await ctx.send("You need to join a voice channel first!")
         return
 
     channel = ctx.author.voice.channel
+
+    # Connect to the voice channel
     try:
-        await channel.connect()
+        # Join the voice channel and establish the connection
+        vc = await channel.connect()
         await ctx.send(f"Joined {channel.name} successfully!")
     except Exception as e:
         await ctx.send(f"Error: {str(e)}")
 
-@bot.command()
+    @bot.command()
 async def leave(ctx):
-    """Leave the current voice channel."""
+    # Disconnect from the voice channel
     if ctx.voice_client:
         await ctx.voice_client.disconnect()
         await ctx.send("Disconnected from the voice channel.")
     else:
         await ctx.send("I'm not in a voice channel.")
-
-@bot.event
-async def on_ready():
-    """Notify when the bot is ready."""
-    print(f'Logged in as {bot.user}')
-
-bot.add_cog(music_cog(bot))
-bot.run('YOUR_BOT_TOKEN')
